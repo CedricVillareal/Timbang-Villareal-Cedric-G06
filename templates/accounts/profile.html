@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<header class="page-head">
+  <h1>My profile</h1>
+  <a class="btn btn-primary" href="{% url 'accounts:profile_edit' %}">Edit profile</a>
+</header>
+
+<section class="panel profile">
+  <div class="profile-id">
+    {% if user.profile_photo %}<img class="avatar avatar-xl" src="{{ user.profile_photo.url }}" alt="Profile photo of {{ user.full_name }}">{% else %}<span class="avatar avatar-xl">{{ user.initial }}</span>{% endif %}
+    <div>
+      <h2>{{ user.full_name }}</h2>
+      <span class="badge badge-{{ user.role|lower }}">{{ user.get_role_display }}</span>
+    </div>
+  </div>
+  <dl class="details">
+    <div><dt>Username</dt><dd>{{ user.username }}</dd></div>
+    <div><dt>Email</dt><dd>{{ user.email }}</dd></div>
+    <div><dt>Contact number</dt><dd>{{ user.contact_number|default:"Not provided" }}</dd></div>
+    <div><dt>Member since</dt><dd>{{ user.date_joined|date:"F j, Y" }}</dd></div>
+    <div><dt>Last login</dt><dd>{{ user.last_login|date:"F j, Y, g:i A"|default:"This is your first login" }}</dd></div>
+  </dl>
+</section>
+{% endblock %}
