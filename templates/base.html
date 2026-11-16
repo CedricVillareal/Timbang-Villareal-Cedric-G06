@@ -1,0 +1,41 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TIMBANG{% endblock %} | TIMBANG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/timbang.css' %}">
+</head>
+<body>
+{% block body %}
+<div class="shell">
+  <aside class="rail">
+    <a class="wordmark" href="{% url 'accounts:dashboard' %}">TIMBANG</a>
+    <nav class="nav" aria-label="Main">
+      {% with current=request.resolver_match.url_name %}
+      <a href="{% url 'accounts:dashboard' %}" {% if current == 'owner_dashboard' or current == 'staff_dashboard' %}aria-current="page"{% endif %}>{% if user.is_owner %}Owner dashboard{% else %}Staff dashboard{% endif %}</a>
+      <a href="{% url 'accounts:profile' %}" {% if current == 'profile' or current == 'profile_edit' %}aria-current="page"{% endif %}>My profile</a>
+      {% endwith %}
+    </nav>
+    <div class="rail-user">
+      <a class="who" href="{% url 'accounts:profile' %}">
+        {% if user.profile_photo %}<img class="avatar" src="{{ user.profile_photo.url }}" alt="">{% else %}<span class="avatar">{{ user.initial }}</span>{% endif %}
+        <span><strong>{{ user.full_name }}</strong><small>{{ user.get_role_display }}</small></span>
+      </a>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-block">Log out</button>
+      </form>
+    </div>
+  </aside>
+  <main class="main">
+    {% include "partials/messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
+</body>
+</html>
