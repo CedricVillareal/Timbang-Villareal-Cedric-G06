@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block body %}
+<div class="auth">
+  {% include "partials/auth_panel.html" %}
+  <section class="auth-form">
+    <div class="auth-card">
+      <h1>Log in</h1>
+      <p class="sub">Use the username and password for your TIMBANG account.</p>
+      {% include "partials/messages.html" %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="form-errors" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>
+        {% endif %}
+        {% include "partials/field.html" with field=form.username %}
+        {% include "partials/field.html" with field=form.password %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+      </form>
+      <p class="switch">No account yet? <a href="{% url 'accounts:register' %}">Create one</a></p>
+    </div>
+  </section>
+</div>
+{% endblock %}

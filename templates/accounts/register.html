@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block body %}
+<div class="auth">
+  {% include "partials/auth_panel.html" %}
+  <section class="auth-form">
+    <div class="auth-card">
+      <h1>Create your account</h1>
+      <p class="sub">The first account created for a shop becomes the Owner. Everyone after that starts as Staff.</p>
+      {% include "partials/messages.html" %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="form-errors" role="alert">{% for e in form.non_field_errors %}<p>{{ e }}</p>{% endfor %}</div>
+        {% endif %}
+        {% include "partials/field.html" with field=form.full_name %}
+        <div class="two-col">
+          {% include "partials/field.html" with field=form.username %}
+          {% include "partials/field.html" with field=form.contact_number %}
+        </div>
+        {% include "partials/field.html" with field=form.email %}
+        {% include "partials/field.html" with field=form.password1 %}
+        {% include "partials/field.html" with field=form.password2 %}
+        <button type="submit" class="btn btn-primary btn-block">Create account</button>
+      </form>
+      <p class="switch">Already registered? <a href="{% url 'accounts:login' %}">Log in</a></p>
+    </div>
+  </section>
+</div>
+{% endblock %}
