@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Access denied{% endblock %}
+{% block content %}
+<section class="panel denied">
+  <h1>You can't open this page</h1>
+  <p>Your {{ user.get_role_display }} account doesn't have access to it. Go back to your own dashboard to continue.</p>
+  <p><a class="btn btn-primary" href="{% url 'accounts:dashboard' %}">Go to my dashboard</a></p>
+</section>
+{% endblock %}
