@@ -1,0 +1,26 @@
+<section class="panel">
+  <div class="panel-head">
+    <h2>Recent transactions</h2>
+    <a class="btn btn-primary" href="{% url 'transactions:create' %}">Record purchase</a>
+  </div>
+  {% if recent %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>No.</th><th>Date</th><th>Seller</th><th class="num">Total (PHP)</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for t in recent %}
+        <tr>
+          <td><a href="{% url 'transactions:detail' t.pk %}">{{ t.transaction_no }}</a></td>
+          <td>{{ t.transaction_date|date:"M j, Y" }}</td>
+          <td>{{ t.seller.full_name }}</td>
+          <td class="num">{{ t.total_amount|floatformat:"2g" }}</td>
+          <td><span class="badge badge-{{ t.status|lower }}">{{ t.get_status_display }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="sub">No transactions yet. Record your first purchase to see it here.</p>
+  {% endif %}
+</section>
