@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Record purchase{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Record purchase</h1>
+    <p class="sub">Pick the seller and add what they sold. Prices, subtotals and the total are filled in automatically when you save.</p>
+  </div>
+</header>
+
+<div class="grid-2">
+  <section class="panel">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "partials/field.html" with field=form.seller %}
+      {% if not form.fields.seller.queryset.exists %}
+        <p class="error-text">There are no active sellers yet. <a href="{% url 'transactions:seller_create' %}">Add a seller</a> first.</p>
+      {% endif %}
+      {% include "partials/field.html" with field=form.transaction_date %}
+
+      <h2>Materials</h2>
+      {{ formset.management_form }}
+      {% if formset.non_form_errors %}
+      <div class="form-errors" role="alert">{% for e in formset.non_form_errors %}<p>{{ e }}</p>{% endfor %}</div>
+      {% endif %}
+      <div class="table-wrap">
+        <table class="items">
+          <thead><tr><th>Material</th><th>Quantity</th></tr></thead>
+          <tbody>
+          {% for f in formset %}
+            <tr>
+              <td>{{ f.material }}{% for e in f.material.errors %}<p class="error-text">{{ e }}</p>{% endfor %}</td>
+              <td>{{ f.quantity }}{% for e in f.quantity.errors %}<p class="error-text">{{ e }}</p>{% endfor %}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Save transaction</button>
+        <a class="btn btn-ghost" href="{% url 'transactions:list' %}">Cancel</a>
+      </div>
+    </form>
+  </section>
+
+  <aside class="panel">
+    <h2>Current buying prices</h2>
+    <ul class="price-list">
+      {% for material, price in prices %}
+      <li>
+        <span>{{ material.name }}</span>
+        <b>{% if price %}PHP {{ price.price_per_unit|floatformat:"2g" }} / {{ material.get_unit_display }}{% else %}No price set{% endif %}</b>
+      </li>
+      {% empty %}
+      <li>No materials yet. Run the seed command (see the README).</li>
+      {% endfor %}
+    </ul>
+  </aside>
+</div>
+{% endblock %}
