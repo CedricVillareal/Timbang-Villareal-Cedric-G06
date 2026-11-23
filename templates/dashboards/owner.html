@@ -4,9 +4,12 @@
 <header class="page-head">
   <div>
     <h1>Owner dashboard</h1>
-    <p class="sub">Welcome, {{ user.full_name }}. You are signed in as an Owner.</p>
+    <p class="sub">Welcome, {{ user.full_name }}. You are signed in as an Owner and can see every transaction.</p>
   </div>
 </header>
+
+{% include "partials/recent_transactions.html" %}
+
 <section class="panel">
   <h2>Your account</h2>
   <dl class="details">
