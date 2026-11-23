@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from transactions.models import Transaction
 
 from .decorators import role_required
 from .forms import LoginForm, ProfileForm, RegistrationForm
@@ -68,13 +69,14 @@ def dashboard(request):
 
 @role_required(User.Role.OWNER)
 def owner_dashboard(request):
-    return render(request, "dashboards/owner.html")
+    recent = Transaction.objects.select_related("seller", "recorded_by")[:5]
+    return render(request, "dashboards/owner.html", {"recent": recent})
 
 
 @role_required(User.Role.STAFF)
 def staff_dashboard(request):
-    return render(request, "dashboards/staff.html")
-
+    recent = Transaction.objects.select_related("seller").filter(recorded_by=request.user)[:5]
+    return render(request, "dashboards/staff.html", {"recent": recent})
 
 # --- Profile (always the signed-in user's own record) -----------------------
 

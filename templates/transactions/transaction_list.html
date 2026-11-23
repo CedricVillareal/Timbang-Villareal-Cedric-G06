@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>{% if user.is_owner %}All transactions{% else %}My transactions{% endif %}</h1>
+    <p class="sub">{% if user.is_owner %}Every purchase recorded in the shop.{% else %}The purchases you recorded.{% endif %}</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'transactions:create' %}">Record purchase</a>
+</header>
+<section class="panel">
+  {% if transactions %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>No.</th><th>Date</th><th>Seller</th>{% if user.is_owner %}<th>Recorded by</th>{% endif %}<th class="num">Total (PHP)</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+      {% for t in transactions %}
+        <tr>
+          <td><a href="{% url 'transactions:detail' t.pk %}">{{ t.transaction_no }}</a></td>
+          <td>{{ t.transaction_date|date:"M j, Y" }}</td>
+          <td>{{ t.seller.full_name }}</td>
+          {% if user.is_owner %}<td>{{ t.recorded_by.full_name }}</td>{% endif %}
+          <td class="num">{{ t.total_amount|floatformat:"2g" }}</td>
+          <td><span class="badge badge-{{ t.status|lower }}">{{ t.get_status_display }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="sub">No transactions yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

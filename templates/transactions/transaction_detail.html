@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ txn.transaction_no }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>{{ txn.transaction_no }}</h1>
+    <span class="badge badge-{{ txn.status|lower }}">{{ txn.get_status_display }}</span>
+  </div>
+  <a class="btn btn-ghost" href="{% url 'transactions:list' %}">Back to list</a>
+</header>
+
+<section class="panel">
+  <dl class="details">
+    <div><dt>Seller</dt><dd>{{ txn.seller.full_name }}</dd></div>
+    <div><dt>Transaction date</dt><dd>{{ txn.transaction_date|date:"F j, Y" }}</dd></div>
+    <div><dt>Recorded by</dt><dd>{{ txn.recorded_by.full_name }}</dd></div>
+    <div><dt>Saved on</dt><dd>{{ txn.created_at|date:"M j, Y g:i A" }}</dd></div>
+  </dl>
+  {% if txn.status == "VOIDED" %}
+  <div class="form-errors">
+    <p>Voided by {{ txn.voided_by.full_name }} on {{ txn.voided_at|date:"M j, Y g:i A" }}.</p>
+    <p>Reason: {{ txn.void_reason }}</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>Materials bought</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Material</th><th class="num">Quantity</th><th class="num">Unit price (PHP)</th><th class="num">Subtotal (PHP)</th></tr></thead>
+      <tbody>
+      {% for item in txn.items.all %}
+        <tr>
+          <td>{{ item.material.name }}</td>
+          <td class="num">{{ item.quantity|floatformat:"2g" }} {{ item.material.get_unit_display }}</td>
+          <td class="num">{{ item.unit_price|floatformat:"2g" }}</td>
+          <td class="num">{{ item.subtotal|floatformat:"2g" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><th colspan="3" class="num">Total payable</th><th class="num">PHP {{ txn.total_amount|floatformat:"2g" }}</th></tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+{% if user.is_owner and txn.status == "COMPLETED" %}
+<section class="panel form-panel">
+  <h2>Void this transaction</h2>
+  <p class="sub">Transactions cannot be edited or deleted. If this one is wrong, void it with a reason. This cannot be undone.</p>
+  <form method="post" action="{% url 'transactions:void' txn.pk %}" novalidate>
+    {% csrf_token %}
+    {% include "partials/field.html" with field=void_form.reason %}
+    <button type="submit" class="btn btn-danger">Void transaction</button>
+  </form>
+</section>
+{% endif %}
+{% endblock %}

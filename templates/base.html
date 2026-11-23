@@ -17,6 +17,9 @@
     <nav class="nav" aria-label="Main">
       {% with current=request.resolver_match.url_name %}
       <a href="{% url 'accounts:dashboard' %}" {% if current == 'owner_dashboard' or current == 'staff_dashboard' %}aria-current="page"{% endif %}>{% if user.is_owner %}Owner dashboard{% else %}Staff dashboard{% endif %}</a>
+      <a href="{% url 'transactions:create' %}" {% if current == 'create' %}aria-current="page"{% endif %}>Record purchase</a>
+      <a href="{% url 'transactions:list' %}" {% if current == 'list' or current == 'detail' %}aria-current="page"{% endif %}>{% if user.is_owner %}All transactions{% else %}My transactions{% endif %}</a>
+      <a href="{% url 'transactions:seller_list' %}" {% if current == 'seller_list' or current == 'seller_create' %}aria-current="page"{% endif %}>Sellers</a>
       <a href="{% url 'accounts:profile' %}" {% if current == 'profile' or current == 'profile_edit' %}aria-current="page"{% endif %}>My profile</a>
       {% endwith %}
     </nav>
